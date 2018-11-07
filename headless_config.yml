@@ -1,0 +1,9 @@
+
+
+environment:
+  staging:
+    project: cinch-hr  # fill project_id or project_number
+    function_name: ChromeHeadlessTest
+    entrypoint: main
+    region: us-central1 # australia-southeast1 not availaible
+    memory: 1024

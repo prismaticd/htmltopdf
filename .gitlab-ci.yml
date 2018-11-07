@@ -1,0 +1,56 @@
+stages:
+- build
+- deploy
+
+variables:
+  CONTAINER_TEST_IMAGE: registry.gitlab.com/prismaticdigital/htmltopdf:$CI_COMMIT_REF_NAME
+  CONTAINER_RELEASE_IMAGE: registry.gitlab.com/prismaticdigital/htmltopdf:latest
+  DOCKER_DRIVER: overlay
+
+cache:
+  key: empty
+  paths: []
+  policy: pull
+
+build:
+  stage: build
+  retry: 2
+  dependencies: []
+  before_script:
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+  script:
+    - find . -regex '.*\(__pycache__\|\.py[co]\)' -delete;
+    - >
+      ./conf/generate_meta.sh;
+      if [[ "$BUST_CACHE" == "true" ]] || [[ "$CI_COMMIT_REF_NAME" =~ ^(master|staging|prod)$ ]]; then
+        echo "uncached docker build";
+        docker build --pull --no-cache -t $CONTAINER_TEST_IMAGE .;
+      else
+        if ! docker pull $CONTAINER_TEST_IMAGE; then
+          docker build -t $CONTAINER_TEST_IMAGE .;
+        else
+          docker build --pull  --cache-from $CONTAINER_TEST_IMAGE  -t $CONTAINER_TEST_IMAGE .;
+        fi
+      fi
+    - docker push $CONTAINER_TEST_IMAGE
+  tags:
+    - linux
+    - shell
+
+release-image:
+  stage: deploy
+  retry: 2
+  dependencies: []
+  variables:
+    GIT_STRATEGY: none
+  before_script:
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+  script:
+    - docker pull $CONTAINER_TEST_IMAGE
+    - docker tag $CONTAINER_TEST_IMAGE $CONTAINER_RELEASE_IMAGE
+    - docker push $CONTAINER_RELEASE_IMAGE
+  only:
+    - master
+  tags:
+    - linux
+    - shell
