@@ -9,4 +9,3 @@ echo ${CI_COMMIT_REF_NAME} > .meta/ref;
 echo ${CI_PIPELINE_ID} > .meta/pipelineid;
 echo ${CI_PIPELINE_IID} > .meta/pipelineiid;
 cat .meta/* > .meta/info
-

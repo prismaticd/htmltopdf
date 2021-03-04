@@ -1,0 +1,40 @@
+[tool.black]
+line-length = 120
+target-version=["py38", ]
+include = '\.pyi?$'
+# see help text for default exclude
+exclude = '''/(
+    # black defaults from --help (see also https://github.com/ambv/black#configuration-format )
+      \.git
+    | \.hg
+    | \.mypy_cache
+    | \.nox
+    | \.tox
+    | \.venv
+    | _build
+    | buck-out
+    | build
+    | dist
+
+    # project specific exclusions
+    | node_modules
+)/
+'''
+
+[tool.isort]
+line_length = 120
+skip = ["node_modules"]
+# run seed-isort-config to populate the known_third_party
+known_third_party = ["fastapi", "gcloud", "google", "pydantic", "pytz", "tests"]
+
+[tool.flakehell]
+max_line_length = 120
+exclude = []
+# format = "grouped"
+
+[tool.flakehell.plugins]
+pycodestyle = ["+*"]
+pyflakes = ["+*",]
+# enable everything that starts from `flake8-`
+"flake8-*" = ["+*"]
+mccabe = ["+*"]

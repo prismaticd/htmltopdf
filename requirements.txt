@@ -1,3 +1,4 @@
-flask
 pyppeteer
-gunicorn
+uvicorn
+asgiref
+fastapi[all]

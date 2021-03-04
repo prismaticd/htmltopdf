@@ -1,0 +1,11 @@
+-r requirements.txt
+
+requests
+black
+isort
+flakehell
+flake8-print  # Forbid print statement in code use logging. instead
+flake8-bugbear  # Catch common errors
+flake8-printf-formatting  # forbid %s use fstring instead
+mypy >= 0.812
+pre-commit
