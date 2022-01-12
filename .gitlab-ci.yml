@@ -3,6 +3,7 @@ stages:
 - deploy
 
 variables:
+  CONTAINER_BASE_URL: registry.gitlab.com/prismaticdigital/htmltopdf
   CONTAINER_TEST_IMAGE: registry.gitlab.com/prismaticdigital/htmltopdf:$CI_COMMIT_REF_NAME
   CONTAINER_RELEASE_IMAGE: registry.gitlab.com/prismaticdigital/htmltopdf:latest
   CONTAINER_PREVIOUS_IMAGE: registry.gitlab.com/prismaticdigital/htmltopdf:previous
@@ -53,9 +54,9 @@ release-image:
     - docker push $CONTAINER_PREVIOUS_IMAGE
     - docker tag $CONTAINER_TEST_IMAGE $CONTAINER_RELEASE_IMAGE
     - timestamp=$(date +%Y%m%d%H%M%S)
-    - docker tag $CONTAINER_TEST_IMAGE $timestamp
+    - docker tag $CONTAINER_TEST_IMAGE $CONTAINER_BASE_URL:$timestamp
     - docker push $CONTAINER_RELEASE_IMAGE
-    - docker push $timestamp
+    - docker push $CONTAINER_BASE_URL:$timestamp
   only:
     - master
   tags:
