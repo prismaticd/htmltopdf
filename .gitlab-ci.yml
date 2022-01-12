@@ -5,6 +5,7 @@ stages:
 variables:
   CONTAINER_TEST_IMAGE: registry.gitlab.com/prismaticdigital/htmltopdf:$CI_COMMIT_REF_NAME
   CONTAINER_RELEASE_IMAGE: registry.gitlab.com/prismaticdigital/htmltopdf:latest
+  CONTAINER_PREVIOUS_IMAGE: registry.gitlab.com/prismaticdigital/htmltopdf:previous
   DOCKER_DRIVER: overlay
 
 cache:
@@ -47,8 +48,14 @@ release-image:
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
   script:
     - docker pull $CONTAINER_TEST_IMAGE
+    - docker pull $CONTAINER_RELEASE_IMAGE
+    - docker tag $CONTAINER_RELEASE_IMAGE $CONTAINER_PREVIOUS_IMAGE
+    - docker push $CONTAINER_PREVIOUS_IMAGE
     - docker tag $CONTAINER_TEST_IMAGE $CONTAINER_RELEASE_IMAGE
+    - timestamp=$(date +%Y%m%d%H%M%S)
+    - docker tag $CONTAINER_TEST_IMAGE $timestamp
     - docker push $CONTAINER_RELEASE_IMAGE
+    - docker push $timestamp
   only:
     - master
   tags:
