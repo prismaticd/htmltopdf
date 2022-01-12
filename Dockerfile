@@ -6,7 +6,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 WORKDIR /files/
 
 RUN apt-get update \
-  && apt-get install -y fonts-croscore fonts-crosextra-carlito && fc-cache -fv \
+  && apt-get install -y fontconfig fonts-croscore fonts-crosextra-carlito && fc-cache -fv \
   && apt-get install -y python3-pip python3-dev \
   && cd /usr/local/bin \
   && ln -s /usr/bin/python3 python \
